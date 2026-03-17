@@ -14,13 +14,13 @@ Run these commands in your project root to set up the toolkit:
 # Clone the toolkit
 git clone --depth 1 https://github.com/spoonbobo/arc-code-agent-setup.git /tmp/arcagi-setup
 
-# Copy generic components to project root
+# Copy scripts to project root (for agent execution)
 cp -r /tmp/arcagi-setup/scripts ./
-cp -r /tmp/arcagi-setup/skills ./
-cp -r /tmp/arcagi-setup/commands ./
 
-# Copy OpenCode-specific files (skills & commands for OpenCode discovery)
+# Create .opencode directory for OpenCode discovery
 mkdir -p .opencode
+
+# Copy skills and commands to .opencode/ (OpenCode-specific)
 cp -r /tmp/arcagi-setup/skills .opencode/
 cp -r /tmp/arcagi-setup/commands .opencode/
 cp /tmp/arcagi-setup/.opencode/INSTALL.md .opencode/
