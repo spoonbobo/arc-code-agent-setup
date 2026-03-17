@@ -43,6 +43,24 @@ if [ ! -f ".env.example" ]; then
     echo "✅ Created .env.example"
 fi
 
+# Copy AGENTS.md if it doesn't exist
+if [ ! -f "AGENTS.md" ]; then
+    cp "$TMP_DIR/AGENTS.md" AGENTS.md 2>/dev/null || true
+    echo "✅ Created AGENTS.md"
+fi
+
+# Copy opencode.jsonc if it doesn't exist
+if [ ! -f "opencode.jsonc" ]; then
+    cp "$TMP_DIR/opencode.jsonc" opencode.jsonc 2>/dev/null || true
+    echo "✅ Created opencode.jsonc"
+fi
+
+# Copy launch.py template if it doesn't exist
+if [ ! -f "launch.py" ]; then
+    cp "$TMP_DIR/launch.py.template" launch.py 2>/dev/null || true
+    echo "✅ Created launch.py from template"
+fi
+
 # Check for Python
 echo "🐍 Checking Python dependencies..."
 if ! command -v python3 &> /dev/null; then

@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""
+Generic ARC-AGI-3 Remote Attempt Launcher Template
+
+This is a template for running remote ARC-AGI-3 game attempts.
+Copy this file to your project root and customize as needed.
+
+Usage:
+    uv run python launch.py
+    ARC_GAME_ID=ls20-cb3b57cc uv run python launch.py
+    ARC_OPERATION_MODE=offline uv run python launch.py
+"""
+
+import os
+import sys
+from dataclasses import dataclass
+from typing import Optional
+
+import dotenv
+from arc_agi import Arcade, OperationMode, Scorecard
+from arcengine import GameAction
+
+
+@dataclass
+class AttemptConfig:
+    """Configuration for a remote attempt."""
+    game_id: str
+    steps: int = 10
+    action: GameAction = GameAction.ACTION1
+    operation_mode: OperationMode = OperationMode.NORMAL
+    render_terminal: bool = False
+    existing_scorecard_id: Optional[str] = None
+    tags: Optional[list] = None
+    note: Optional[str] = None
+
+
+@dataclass  
+class AttemptResult:
+    """Result of a remote attempt."""
+    scorecard_id: str
+    final_scorecard: Optional[Scorecard] = None
+
+
+def get_operation_mode() -> OperationMode:
+    """Parse ARC_OPERATION_MODE env var, defaulting to NORMAL."""
+    mode = os.getenv("ARC_OPERATION_MODE", "normal").lower()
+    if mode == "online":
+        return OperationMode.ONLINE
+    if mode == "offline":
+        return OperationMode.OFFLINE
+    return OperationMode.NORMAL
+
+
+def get_game_id(arc: Arcade) -> str:
+    """Get game ID from env var or auto-discover."""
+    env_game_id = os.getenv("ARC_GAME_ID", "").strip()
+    if env_game_id:
+        print(f"Using game from ARC_GAME_ID: {env_game_id}")
+        return env_game_id
+
+    # Auto-discover available games
+    print("ARC_GAME_ID not set, discovering available games...")
+    games = arc.get_environments()
+
+    if not games:
+        print("ERROR: No games available!", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"Found {len(games)} game(s):")
+    for g in games:
+        print(f"  - {g.game_id}: {g.title}")
+
+    selected = games[0].game_id
+    print(f"\nAuto-selected: {selected}")
+    return selected
+
+
+def run_remote_attempt(arc: Arcade, config: AttemptConfig) -> AttemptResult:
+    """
+    Run a remote attempt with the given configuration.
+    
+    This is a generic implementation. Customize this function
+    to add your own policy logic, action selection, etc.
+    """
+    # Create or open scorecard
+    if config.existing_scorecard_id:
+        scorecard = arc.open_scorecard(config.existing_scorecard_id)
+        print(f"Resumed scorecard: {config.existing_scorecard_id}")
+    else:
+        scorecard = arc.create_scorecard(
+            game_id=config.game_id,
+            tags=config.tags or [],
+            opaque={"note": config.note} if config.note else None
+        )
+        print(f"Created scorecard: {scorecard.id}")
+
+    try:
+        # Create environment
+        env = arc.make(
+            config.game_id,
+            render_mode="ansi" if config.render_terminal else None,
+            scorecard_id=scorecard.id
+        )
+        
+        obs, info = env.reset()
+        print(f"\nStarting game: {config.game_id}")
+        print(f"Steps: {config.steps}")
+        print(f"Initial observation shape: {obs.shape if hasattr(obs, 'shape') else 'N/A'}")
+
+        # Run steps
+        for step in range(config.steps):
+            # Get available actions
+            available_actions = env.action_space
+            
+            # Simple policy: use the configured action if available
+            if config.action in available_actions:
+                action = config.action
+            elif len(available_actions) > 0:
+                action = available_actions[0]
+            else:
+                print(f"Step {step}: No actions available")
+                break
+
+            # Take action
+            obs, reward, terminated, truncated, info = env.step(action)
+            
+            print(f"Step {step + 1}: action={action.name}, reward={reward}")
+            
+            if config.render_terminal:
+                print(env.render())
+
+            if terminated or truncated:
+                print(f"Game ended at step {step + 1}")
+                break
+
+        # Close environment
+        env.close()
+        
+        # Get final scorecard
+        final_scorecard = arc.get_scorecard(scorecard.id)
+        
+        return AttemptResult(
+            scorecard_id=scorecard.id,
+            final_scorecard=final_scorecard
+        )
+
+    except Exception as e:
+        print(f"Error during attempt: {e}", file=sys.stderr)
+        # Ensure scorecard is closed even on failure
+        try:
+            arc.close_scorecard(scorecard.id)
+        except:
+            pass
+        raise
+
+
+def main() -> None:
+    """Main entry point."""
+    dotenv.load_dotenv()
+
+    # Configuration
+    render_terminal = False
+    existing_scorecard_id = None  # Set to resume an existing scorecard
+
+    operation_mode = get_operation_mode()
+    print(f"Operation mode: {operation_mode.name}")
+
+    arc = Arcade(operation_mode=operation_mode)
+    game_id = get_game_id(arc)
+
+    config = AttemptConfig(
+        game_id=game_id,
+        steps=10,
+        action=GameAction.ACTION1,
+        operation_mode=operation_mode,
+        render_terminal=render_terminal,
+        existing_scorecard_id=existing_scorecard_id,
+        tags=["sample-launch"],
+        note="Generic launcher remote attempt",
+    )
+
+    result = run_remote_attempt(arc, config)
+
+    print(f"\nScorecard ID: {result.scorecard_id}")
+    if result.final_scorecard is not None:
+        print(f"Score: {result.final_scorecard.score}")
+        print("\nFull scorecard:")
+        print(result.final_scorecard.model_dump_json(indent=2))
+
+
+if __name__ == "__main__":
+    main()
