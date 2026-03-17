@@ -1,137 +1,144 @@
-# Installing ARC-AGI Toolkit for OpenCode
+# OpenCode Installation Guide
 
-## Prerequisites
+This guide explains how to use the ARC-AGI Toolkit with OpenCode.
 
-- [OpenCode.ai](https://opencode.ai) installed
-- Python 3.12+
-- `uv` for Python dependency management
-- ARC_API_KEY (optional, for online mode)
+## Overview
+
+The ARC-AGI Toolkit provides Python scripts in the `scripts/` directory that work with any coding agent, including OpenCode. These are generic CLI tools for running ARC-AGI-3 games, managing scorecards, and exploring game environments.
 
 ## Installation
 
-### Option 1: One-liner Script (Recommended)
+1. **Run the install script:**
+   ```bash
+   ./install.sh
+   ```
 
-From your project root, run:
-
-```bash
-curl -sL https://raw.githubusercontent.com/spoonbobo/arc-code-agent-setup/main/install.sh | bash
-```
-
-This will:
-- Copy `.opencode/` directory with all tools, commands, and skills
-- Check Python dependencies
-- Create `.env.example` if it doesn't exist
-
-### Option 2: Manual Copy
-
-```bash
-# Clone the setup repository
-git clone https://github.com/spoonbobo/arc-code-agent-setup.git /tmp/arcagi-setup
-
-# Copy to your project
-cp -r /tmp/arcagi-setup/commands ./.opencode/
-cp -r /tmp/arcagi-setup/skills ./.opencode/
-cp -r /tmp/arcagi-setup/tools ./.opencode/
-cp -r /tmp/arcagi-setup/scripts ./.opencode/
-
-# Optional: copy example files
-cp /tmp/arcagi-setup/.env.example ./.env.example
-```
-
-## Configuration
-
-1. Copy `.env.example` to `.env`:
+2. **Configure environment:**
    ```bash
    cp .env.example .env
+   # Edit .env and add your ARC_API_KEY
    ```
 
-2. Edit `.env` and set your configuration:
-   ```
-   ARC_API_KEY=your-api-key-here  # Optional, for online mode
-   ARC_OPERATION_MODE=normal      # Options: online, offline, normal
-   ARC_GAME_ID=                   # Optional: specific game ID
-   ```
-
-3. Install Python dependencies:
+3. **Install dependencies:**
    ```bash
    uv sync
    ```
 
-## Verification
+## Using with OpenCode
 
-After installation, verify everything works:
+OpenCode can directly invoke the Python scripts in the `scripts/` directory. Use the following patterns:
 
-1. **Check setup:**
-   ```
-   /arc-setup
-   ```
+### Quick Commands
 
-2. **List available games:**
-   ```
-   /arc-games
-   ```
+OpenCode has quick commands available via the TUI (press `/`):
 
-3. **Quick play:**
-   ```
-   /arc-play
-   ```
-
-## Available Commands
-
-### Setup & Discovery
-- `/arc-setup` - Check configuration and cached games
-- `/arc-games` - List all available games
-- `/arc-inspect [game_id]` - Inspect game metadata
-- `/arc-actions [game_id]` - Show available actions
-
-### Download & Cache
-- `/arc-download [game_id]` - Download game for offline use
-- `/arc-download-all` - Download all games
-
-### Gameplay
-- `/arc-play [game_id]` - Quick play
+- `/arc-setup` - Check configuration
+- `/arc-games` - List available games
+- `/arc-play` - Quick play a game
+- `/arc-inspect [game_id]` - Inspect game without playing
 - `/arc-sweep [game_id]` - Run multi-seed sweep
 
-### Scorecards
-- `/arc-scorecard-create` - Create scorecard
-- `/arc-scorecard-get [id]` - Get results
-- `/arc-scorecard-close [id]` - Close scorecard
+### Direct Script Usage
 
-## Available Tools
+You can also tell OpenCode to run scripts directly:
 
-Use `/` to access the full tool interface:
+```
+Run python scripts/arc_setup_check.py to verify the setup
+```
 
-- `/arc_list_games` - List games with mode filter
-- `/arc_download_game` - Download specific game
-- `/arc_download_all` - Download all games
-- `/arc_inspect_game` - Inspect without playing
-- `/arc_show_actions` - Display actions
-- `/arc_play` - Quick play with options
-- `/arc_play_with_recording` - Play with recording
-- `/arc_run_sweep` - Multi-seed runs
-- `/arc_create_scorecard` - Create custom scorecard
-- `/arc_get_scorecard` - Get results
-- `/arc_close_scorecard` - Close scorecard
-- `/arc_setup_check` - Verify configuration
+```
+List available games with python scripts/arc_list_games.py
+```
+
+```
+Play game ls20-cb3b57cc with python scripts/arc_play.py --game-id ls20-cb3b57cc --steps 20
+```
+
+## Available Scripts
+
+All scripts are located in `scripts/` and can be run with `python scripts/<name>.py`:
+
+**Game Execution:**
+- `arc_play.py` - Quick play
+- `arc_play_with_recording.py` - Play with recording
+- `arc_run_sweep.py` - Multi-seed runs
+
+**Game Discovery:**
+- `arc_list_games.py` - List games
+- `arc_setup_check.py` - Verify setup
+- `arc_inspect_game.py` - Inspect game
+- `arc_show_actions.py` - Show actions
+
+**Game Management:**
+- `arc_download_game.py` - Download specific game
+- `arc_download_all.py` - Download all games
+
+**Scorecard Management:**
+- `arc_create_scorecard.py` - Create scorecard
+- `arc_get_scorecard.py` - Get scorecard
+- `arc_close_scorecard.py` - Close scorecard
+
+## Skills
+
+The toolkit includes skills in the `skills/` directory:
+
+- `arcagi3-research-loop` - Planning experiments
+- `arcagi3-attempt-review` - Reviewing runs
+- `arcagi3-runner-design` - Designing runners
+- `arc-toolkit-usage` - Comprehensive script reference
+
+OpenCode will automatically detect and use these skills.
+
+## Environment Variables
+
+Set these in your `.env` file:
+
+- `ARC_API_KEY` - Your ARC-AGI API key
+- `ARC_OPERATION_MODE` - normal/online/offline (default: normal)
+- `ARC_GAME_ID` - Default game ID
+
+## Example Workflow
+
+```bash
+# Check setup
+python scripts/arc_setup_check.py
+
+# List games
+python scripts/arc_list_games.py
+
+# Inspect a game
+python scripts/arc_inspect_game.py --game-id ls20-cb3b57cc
+
+# Quick play
+python scripts/arc_play.py --game-id ls20-cb3b57cc --steps 10
+
+# Create scorecard for tracked run
+python scripts/arc_create_scorecard.py --game-id ls20-cb3b57cc --tags "baseline"
+
+# Play with recording
+python scripts/arc_play_with_recording.py --game-id ls20-cb3b57cc
+
+# Get results
+python scripts/arc_get_scorecard.py --scorecard-id <id>
+```
 
 ## Troubleshooting
 
-### Commands not showing in TUI
-- Ensure `.opencode/commands/` exists with `.md` files
-- Restart OpenCode
+**Script not found:**
+- Make sure you're in the project root
+- Run `ls scripts/` to verify scripts exist
 
-### Tools failing
-- Check Python 3.12+ is installed: `python --version`
-- Verify `uv` is installed: `uv --version`
+**Import errors:**
 - Run `uv sync` to install dependencies
+- Verify Python 3.12+ is installed
 
-### API errors
-- Verify `ARC_API_KEY` is set in `.env`
-- Check your internet connection for ONLINE mode
+**API errors:**
+- Check `ARC_API_KEY` is set in `.env`
+- Run `python scripts/arc_setup_check.py` to diagnose
 
-### Import errors
-- Ensure you're running from project root
-- Check `PYTHONPATH` includes the project directory
+## Support
+
+For detailed script documentation, see the `arc-toolkit-usage` skill or run any script with `--help`.
 
 ## Updating
 
@@ -139,21 +146,15 @@ To update to the latest version:
 
 ```bash
 # Re-run the install script
-curl -sL https://raw.githubusercontent.com/spoonbobo/arc-code-agent-setup/main/install.sh | bash
+./install.sh
 ```
 
 Or manually pull and copy:
 
 ```bash
-cd /tmp/arcagi-setup && git pull
-cp -r /tmp/arcagi-setup/.opencode/* ./.opencode/
+cd ~/arc-code-agent-setup && git pull
+./install.sh
 ```
-
-## Getting Help
-
-- **Issues:** [https://github.com/spoonbobo/arc-code-agent-setup/issues](https://github.com/spoonbobo/arc-code-agent-setup/issues)
-- **ARC-AGI Docs:** [https://docs.arcprize.org](https://docs.arcprize.org)
-- **OpenCode Docs:** [https://opencode.ai/docs](https://opencode.ai/docs)
 
 ## License
 

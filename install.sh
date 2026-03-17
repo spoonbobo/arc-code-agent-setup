@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🎮 Installing ARC-AGI Toolkit for OpenCode..."
+echo "🎮 Installing ARC-AGI Toolkit..."
 
 # Check if we're in a project directory
 if [ ! -f "pyproject.toml" ] && [ ! -d ".git" ]; then
@@ -12,9 +12,6 @@ if [ ! -f "pyproject.toml" ] && [ ! -d ".git" ]; then
         exit 1
     fi
 fi
-
-# Create .opencode directory if it doesn't exist
-mkdir -p .opencode
 
 # Temporary directory for download
 TMP_DIR=$(mktemp -d)
@@ -30,32 +27,31 @@ else
     exit 1
 fi
 
-# Copy directories
-echo "📁 Copying files..."
-cp -r "$TMP_DIR/commands" .opencode/ 2>/dev/null || echo "  - commands/ already exists or copy failed"
-cp -r "$TMP_DIR/skills" .opencode/ 2>/dev/null || echo "  - skills/ already exists or copy failed"
-cp -r "$TMP_DIR/tools" .opencode/ 2>/dev/null || echo "  - tools/ already exists or copy failed"
-cp -r "$TMP_DIR/scripts" .opencode/ 2>/dev/null || echo "  - scripts/ already exists or copy failed"
+# Copy directories to root (generic components)
+echo "📁 Copying generic components..."
+cp -r "$TMP_DIR/scripts" . 2>/dev/null || echo "  - scripts/ already exists or copy failed"
+cp -r "$TMP_DIR/skills" . 2>/dev/null || echo "  - skills/ already exists or copy failed"
+cp -r "$TMP_DIR/commands" . 2>/dev/null || echo "  - commands/ already exists or copy failed"
 
-# Copy .env.example if it doesn't exist
+# Copy .opencode directory (OpenCode-specific)
+if [ -d "$TMP_DIR/.opencode" ]; then
+    mkdir -p .opencode
+    cp -r "$TMP_DIR/.opencode/"* .opencode/ 2>/dev/null || echo "  - .opencode/ copy completed"
+fi
+
+# Copy root-level files if they don't exist
+echo "📄 Copying configuration files..."
+
 if [ ! -f ".env.example" ]; then
     cp "$TMP_DIR/.env.example" .env.example 2>/dev/null || true
     echo "✅ Created .env.example"
 fi
 
-# Copy AGENTS.md if it doesn't exist
 if [ ! -f "AGENTS.md" ]; then
     cp "$TMP_DIR/AGENTS.md" AGENTS.md 2>/dev/null || true
     echo "✅ Created AGENTS.md"
 fi
 
-# Copy opencode.jsonc if it doesn't exist
-if [ ! -f "opencode.jsonc" ]; then
-    cp "$TMP_DIR/opencode.jsonc" opencode.jsonc 2>/dev/null || true
-    echo "✅ Created opencode.jsonc"
-fi
-
-# Copy launch.py template if it doesn't exist
 if [ ! -f "launch.py" ]; then
     cp "$TMP_DIR/launch.py.template" launch.py 2>/dev/null || true
     echo "✅ Created launch.py from template"
@@ -92,6 +88,12 @@ fi
 echo ""
 echo "✅ ARC-AGI Toolkit installed successfully!"
 echo ""
+echo "📁 Installed components:"
+echo "  - scripts/      : Python CLI tools (12 scripts)"
+echo "  - skills/       : Workflow guidance (4 skills)"
+echo "  - commands/     : Quick reference docs"
+echo "  - .opencode/    : OpenCode-specific setup"
+echo ""
 echo "Next steps:"
 echo "  1. Copy .env.example to .env and configure:"
 echo "     cp .env.example .env"
@@ -99,12 +101,13 @@ echo ""
 echo "  2. Install dependencies (if not already done):"
 echo "     uv sync"
 echo ""
-echo "  3. Verify installation in OpenCode TUI:"
-echo "     /arc-setup"
+echo "  3. Verify setup:"
+echo "     python scripts/arc_setup_check.py"
 echo ""
 echo "  4. List available games:"
-echo "     /arc-games"
+echo "     python scripts/arc_list_games.py"
 echo ""
-echo "For detailed documentation, see:"
-echo "  .opencode/INSTALL.md"
+echo "For agent-specific instructions, see:"
+echo "  - OpenCode: .opencode/INSTALL.md"
+echo "  - Generic: README.md"
 echo ""
