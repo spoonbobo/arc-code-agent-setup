@@ -4,7 +4,7 @@ This guide explains how to use the ARC-AGI Toolkit with OpenCode.
 
 ## Overview
 
-The ARC-AGI Toolkit provides Python scripts in the `scripts/` directory that work with any coding agent, including OpenCode. These are generic CLI tools for running ARC-AGI-3 games, managing scorecards, and exploring game environments.
+The ARC-AGI Toolkit provides Python scripts in the `.opencode/scripts/` directory that work with any coding agent, including OpenCode. These are generic CLI tools for running ARC-AGI-3 games, managing scorecards, and exploring game environments.
 
 ## Installation
 
@@ -38,7 +38,7 @@ Note: The `.opencode/INSTALL.md` file is NOT copied - it should be read directly
 
 ## Using with OpenCode
 
-OpenCode can directly invoke the Python scripts in the `scripts/` directory. Use the following patterns:
+OpenCode can directly invoke the Python scripts in the `.opencode/scripts/` directory. Use the following patterns:
 
 ### Quick Commands
 
@@ -55,20 +55,20 @@ OpenCode has quick commands available via the TUI (press `/`):
 You can also tell OpenCode to run scripts directly:
 
 ```
-Run python scripts/arc_setup_check.py to verify the setup
+Run python .opencode/scripts/arc_setup_check.py to verify the setup
 ```
 
 ```
-List available games with python scripts/arc_list_games.py
+List available games with python .opencode/scripts/arc_list_games.py
 ```
 
 ```
-Play game ls20-cb3b57cc with python scripts/arc_play.py --game-id ls20-cb3b57cc --steps 20
+Play game ls20-cb3b57cc with python .opencode/scripts/arc_play.py --game-id ls20-cb3b57cc --steps 20
 ```
 
 ## Available Scripts
 
-All scripts are located in `scripts/` and can be run with `python scripts/<name>.py`:
+All scripts are located in `.opencode/scripts/` and can be run with `python .opencode/scripts/<name>.py`:
 
 **Game Execution:**
 - `arc_play.py` - Quick play
@@ -113,32 +113,32 @@ Set these in your `.env` file:
 
 ```bash
 # Check setup
-python scripts/arc_setup_check.py
+python .opencode/scripts/arc_setup_check.py
 
 # List games
-python scripts/arc_list_games.py
+python .opencode/scripts/arc_list_games.py
 
 # Inspect a game
-python scripts/arc_inspect_game.py --game-id ls20-cb3b57cc
+python .opencode/scripts/arc_inspect_game.py --game-id ls20-cb3b57cc
 
 # Quick play
-python scripts/arc_play.py --game-id ls20-cb3b57cc --steps 10
+python .opencode/scripts/arc_play.py --game-id ls20-cb3b57cc --steps 10
 
 # Create scorecard for tracked run
-python scripts/arc_create_scorecard.py --game-id ls20-cb3b57cc --tags "baseline"
+python .opencode/scripts/arc_create_scorecard.py --game-id ls20-cb3b57cc --tags "baseline"
 
 # Play with recording
-python scripts/arc_play_with_recording.py --game-id ls20-cb3b57cc
+python .opencode/scripts/arc_play_with_recording.py --game-id ls20-cb3b57cc
 
 # Get results
-python scripts/arc_get_scorecard.py --scorecard-id <id>
+python .opencode/scripts/arc_get_scorecard.py --scorecard-id <id>
 ```
 
 ## Troubleshooting
 
 **Script not found:**
 - Make sure you're in the project root
-- Run `ls scripts/` to verify scripts exist
+- Run `ls .opencode/scripts/` to verify scripts exist
 
 **Import errors:**
 - Run `uv sync` to install dependencies
@@ -146,7 +146,7 @@ python scripts/arc_get_scorecard.py --scorecard-id <id>
 
 **API errors:**
 - Check `ARC_API_KEY` is set in `.env`
-- Run `python scripts/arc_setup_check.py` to diagnose
+- Run `python .opencode/scripts/arc_setup_check.py` to diagnose
 
 **Skills not loading in OpenCode:**
 - Verify `.opencode/skills/` exists with skill directories
