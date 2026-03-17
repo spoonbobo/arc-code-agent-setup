@@ -33,12 +33,6 @@ cp -r "$TMP_DIR/scripts" . 2>/dev/null || echo "  - scripts/ already exists or c
 cp -r "$TMP_DIR/skills" . 2>/dev/null || echo "  - skills/ already exists or copy failed"
 cp -r "$TMP_DIR/commands" . 2>/dev/null || echo "  - commands/ already exists or copy failed"
 
-# Copy .opencode directory (OpenCode-specific)
-if [ -d "$TMP_DIR/.opencode" ]; then
-    mkdir -p .opencode
-    cp -r "$TMP_DIR/.opencode/"* .opencode/ 2>/dev/null || echo "  - .opencode/ copy completed"
-fi
-
 # Copy root-level files if they don't exist
 echo "📄 Copying configuration files..."
 
@@ -92,7 +86,9 @@ echo "📁 Installed components:"
 echo "  - scripts/      : Python CLI tools (12 scripts)"
 echo "  - skills/       : Workflow guidance (4 skills)"
 echo "  - commands/     : Quick reference docs"
-echo "  - .opencode/    : OpenCode-specific setup"
+echo ""
+echo "For OpenCode: copy skills/ and commands/ to .opencode/ manually"
+echo "or use the commands in .opencode/INSTALL.md"
 echo ""
 echo "Next steps:"
 echo "  1. Copy .env.example to .env and configure:"

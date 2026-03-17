@@ -8,21 +8,34 @@ The ARC-AGI Toolkit provides Python scripts in the `scripts/` directory that wor
 
 ## Installation
 
-1. **Run the install script:**
-   ```bash
-   ./install.sh
-   ```
+Run these commands in your project root to set up the toolkit:
 
-2. **Configure environment:**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your ARC_API_KEY
-   ```
+```bash
+# Clone the toolkit
+git clone --depth 1 https://github.com/spoonbobo/arc-code-agent-setup.git /tmp/arcagi-setup
 
-3. **Install dependencies:**
-   ```bash
-   uv sync
-   ```
+# Copy generic components to project root
+cp -r /tmp/arcagi-setup/scripts ./
+cp -r /tmp/arcagi-setup/skills ./
+cp -r /tmp/arcagi-setup/commands ./
+
+# Copy OpenCode-specific files (skills & commands for OpenCode discovery)
+mkdir -p .opencode
+cp -r /tmp/arcagi-setup/skills .opencode/
+cp -r /tmp/arcagi-setup/commands .opencode/
+cp /tmp/arcagi-setup/.opencode/INSTALL.md .opencode/
+
+# Copy configuration files
+cp /tmp/arcagi-setup/.env.example ./.env.example
+cp /tmp/arcagi-setup/launch.py.template ./launch.py
+cp /tmp/arcagi-setup/AGENTS.md ./AGENTS.md
+
+# Clean up
+rm -rf /tmp/arcagi-setup
+
+# Install dependencies
+uv sync
+```
 
 ## Using with OpenCode
 
@@ -80,14 +93,14 @@ All scripts are located in `scripts/` and can be run with `python scripts/<name>
 
 ## Skills
 
-The toolkit includes skills in the `skills/` directory:
+The toolkit includes skills in the `skills/` directory (also copied to `.opencode/skills/` for OpenCode):
 
 - `arcagi3-research-loop` - Planning experiments
 - `arcagi3-attempt-review` - Reviewing runs
 - `arcagi3-runner-design` - Designing runners
 - `arc-toolkit-usage` - Comprehensive script reference
 
-OpenCode will automatically detect and use these skills.
+OpenCode will automatically detect and use these skills from `.opencode/skills/`.
 
 ## Environment Variables
 
@@ -136,25 +149,12 @@ python scripts/arc_get_scorecard.py --scorecard-id <id>
 - Check `ARC_API_KEY` is set in `.env`
 - Run `python scripts/arc_setup_check.py` to diagnose
 
+**Skills not loading in OpenCode:**
+- Verify `.opencode/skills/` exists with skill directories
+
 ## Support
 
 For detailed script documentation, see the `arc-toolkit-usage` skill or run any script with `--help`.
-
-## Updating
-
-To update to the latest version:
-
-```bash
-# Re-run the install script
-./install.sh
-```
-
-Or manually pull and copy:
-
-```bash
-cd ~/arc-code-agent-setup && git pull
-./install.sh
-```
 
 ## License
 
