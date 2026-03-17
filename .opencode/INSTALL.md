@@ -14,16 +14,13 @@ Run these commands in your project root to set up the toolkit:
 # Clone the toolkit
 git clone --depth 1 https://github.com/spoonbobo/arc-code-agent-setup.git /tmp/arcagi-setup
 
-# Copy scripts to project root (for agent execution)
-cp -r /tmp/arcagi-setup/scripts ./
-
-# Create .opencode directory for OpenCode discovery
+# Create .opencode directory for OpenCode
 mkdir -p .opencode
 
-# Copy skills and commands to .opencode/ (OpenCode-specific)
+# Copy scripts, skills, and commands to .opencode/
+cp -r /tmp/arcagi-setup/scripts .opencode/
 cp -r /tmp/arcagi-setup/skills .opencode/
 cp -r /tmp/arcagi-setup/commands .opencode/
-cp /tmp/arcagi-setup/.opencode/INSTALL.md .opencode/
 
 # Copy configuration files
 cp /tmp/arcagi-setup/.env.example ./.env.example
@@ -36,6 +33,8 @@ rm -rf /tmp/arcagi-setup
 # Install dependencies
 uv sync
 ```
+
+Note: The `.opencode/INSTALL.md` file is NOT copied - it should be read directly from the remote repository URL.
 
 ## Using with OpenCode
 
