@@ -1,4 +1,4 @@
-# ARC-AGI Toolkit for OpenCode
+# ARC Code Agent Setup
 
 A complete toolkit for running and improving ARC-AGI-3 game attempts in OpenCode.
 
@@ -113,10 +113,6 @@ See [INSTALL.md](INSTALL.md) for detailed instructions.
 ## License
 
 MIT License
-
-## Contributing
-
-This toolkit is extracted from the [redpill](https://github.com/spoonbobo/redpill) ARC-AGI research repository.
 
 ## Support
 
