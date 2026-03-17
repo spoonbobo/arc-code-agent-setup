@@ -39,9 +39,9 @@ The main goal is to help agents:
 - `launch.py` is the minimal remote run example with env-based configuration (auto-copied from template if not present).
 - `pyproject.toml` defines the Python project and dependencies.
 - `.env.example` shows required environment variables.
-- `.opencode/skills/` contains repo-local skills for ARC-AGI-3 workflows.
-- `.opencode/tools/` contains OpenCode custom tools for toolkit operations.
-- `.opencode/commands/` contains OpenCode quick commands for TUI access.
+- `skills/` contains repo-local skills for ARC-AGI-3 workflows.
+- `scripts/` contains Python CLI tools for toolkit operations.
+- `commands/` contains quick reference commands.
 
 ## Environment And Tooling
 

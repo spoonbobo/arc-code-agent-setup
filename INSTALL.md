@@ -21,11 +21,15 @@ curl -sL https://raw.githubusercontent.com/spoonbobo/arc-code-agent-setup/main/i
 # Clone this repository
 git clone https://github.com/spoonbobo/arc-code-agent-setup.git /tmp/arcagi-setup
 
-# Copy files to your project
-cp -r /tmp/arcagi-setup/commands /tmp/arcagi-setup/skills /tmp/arcagi-setup/tools /tmp/arcagi-setup/scripts ./.opencode/
+# Copy generic components to your project
+cp -r /tmp/arcagi-setup/scripts /tmp/arcagi-setup/skills /tmp/arcagi-setup/commands ./
 
-# Optional: copy example environment file
+# Copy OpenCode-specific files (if using OpenCode)
+cp -r /tmp/arcagi-setup/.opencode ./
+
+# Optional: copy example environment file and launcher
 cp /tmp/arcagi-setup/.env.example ./.env.example
+cp /tmp/arcagi-setup/launch.py.template ./launch.py
 ```
 
 ## Configuration
