@@ -60,7 +60,3 @@ For detailed instructions, see `.opencode/INSTALL.md`
 - **12 Tools** - Full TypeScript tool interface
 - **13 Python Scripts** - Implementation backing
 - **3 Skills** - ARC-AGI specific guidance
-
-## License
-
-MIT

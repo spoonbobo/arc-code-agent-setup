@@ -154,7 +154,3 @@ python .opencode/scripts/arc_get_scorecard.py --scorecard-id <id>
 ## Support
 
 For detailed script documentation, see the `arc-toolkit-usage` skill or run any script with `--help`.
-
-## License
-
-MIT License

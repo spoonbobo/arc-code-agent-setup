@@ -215,10 +215,6 @@ python scripts/arc_download_all.py
 python scripts/arc_play.py --mode offline --game-id ls20-cb3b57cc
 ```
 
-## License
-
-MIT License
-
 ## Support
 
 - Issues: [https://github.com/spoonbobo/arc-code-agent-setup/issues](https://github.com/spoonbobo/arc-code-agent-setup/issues)
